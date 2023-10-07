@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title> AquaRealms</title>
-     <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <style>
         body { margin: 0; }
 
@@ -59,10 +59,11 @@
 </head>
 <body>
     <header>
-        <h1><span class="icon">🪐</span>AQUAREALMS</h1>
+        <h1><span class="icon">🪐</span>AQUA-REALMS</h1>
         <p>Explore the planets in our solar system that contain water in various forms, including ice and water vapor.</p>
         <p>BY AQUANAUTS:GUARDIANS OF TERRESTRIAL AND EXTRATERRESTRIAL WATERS  </p>
     </header>
+   
    
     <!-- Include Three.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -103,7 +104,7 @@
         var marsTexture = new THREE.TextureLoader().load('marstexture.jpg'); // Provide a suitable Mars texture
         var marsMaterial = new THREE.MeshBasicMaterial({ map: marsTexture });
         var mars = new THREE.Mesh(marsGeometry, marsMaterial);
-        mars.userData = { radius: 8, zoom: 4, name: 'Mars', description: 'Mars has a north and south pole; both have frozen water ice. During its winter the north pole gets covered in a layer of carbon dioxide ice about 1 meter thick, which then sublimes and exposes the water ice in summer. The south pole is permanently covered in a CO2 ice layer about 8 km thick, so its water ice is never seen on the surface.' };
+        mars.userData = { radius: 8, zoom: 4, name: 'Mars', description: 'Mars has a north and south pole; both have frozen water ice. During its winter, the north pole gets covered in a layer of carbon dioxide ice about 1 meter thick, which then sublimes and exposes the water ice in summer. The south pole is permanently covered in a CO2 ice layer about 8 km thick, so its water ice is never seen on the surface.' };
         planets.push(mars);
 
         // Create Earth
@@ -111,7 +112,7 @@
         var earthTexture = new THREE.TextureLoader().load('earthtexture.jpg'); // Provide a suitable Earth texture
         var earthMaterial = new THREE.MeshBasicMaterial({ map: earthTexture });
         var earth = new THREE.Mesh(earthGeometry, earthMaterial);
-        earth.userData = { radius: 10, zoom: 3, name: 'Earth', description: 'The third planet from the Sun.' };
+        earth.userData = { radius: 10, zoom: 3, name: 'Earth', description: 'Earth, also known as the Blue Planet, is the third planet from the Sun. It is the only planet known to support life and has vast amounts of water in the form of oceans and polar ice caps.' };
         planets.push(earth);
 
         // Create Neptune
@@ -119,7 +120,7 @@
         var neptuneTexture = new THREE.TextureLoader().load('neptunetexture.jpg'); // Provide a suitable Neptune texture
         var neptuneMaterial = new THREE.MeshBasicMaterial({ map: neptuneTexture });
         var neptune = new THREE.Mesh(neptuneGeometry, neptuneMaterial);
-        neptune.userData = { radius: 12, zoom: 2, name: 'Neptune', description: 'The eighth planet from the Sun.' };
+        neptune.userData = { radius: 12, zoom: 2, name: 'Neptune', description: 'Neptune is the eighth and farthest-known planet from the Sun in the Solar System. It is a gas giant with a deep blue color, primarily due to the presence of methane in its atmosphere. While it doesn\'t have liquid water on its surface, it likely has water in the form of ice and water vapor in its atmosphere.' };
         planets.push(neptune);
         neptune.position.x = neptune.userData.radius;
 
@@ -128,7 +129,7 @@
         var venusTexture = new THREE.TextureLoader().load('venustexture.jpg'); // Provide a suitable Venus texture
         var venusMaterial = new THREE.MeshBasicMaterial({ map: venusTexture });
         var venus = new THREE.Mesh(venusGeometry, venusMaterial);
-        venus.userData = { radius: 6, zoom: 3, name: 'Venus', description: 'The second planet from the Sun.' };
+        venus.userData = { radius: 6, zoom: 3, name: 'Venus', description: 'Venus, often referred to as Earth\'s "sister planet," is the second planet from the Sun. Its surface is extremely hot due to a runaway greenhouse effect, making it inhospitable to life. It has no liquid water on its surface, but it may have water ice in its polar regions and water vapor in its atmosphere.' };
         planets.push(venus);
 
         // Add planets to the scene
@@ -205,6 +206,7 @@
         };
 
         animate();
+        
     </script>
 </body>
 </html>
