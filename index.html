@@ -2,408 +2,80 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AquaRealms</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AQUANAUTS</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Create a CSS file for styling -->
     <style>
-        body { margin: 0; }
-        /* Add styles for the "planet-button" class */
-        .planet-button {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 20px;
-            border: 2px solid #333;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
+        /* styles.css */
 
-        
-        /* CSS for dialog boxes */
-        .planet-dialog {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 20px;
-            border: 2px solid #333;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-        
-        /* CSS for planet info container */
-        .planet-info {
-            position: absolute;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 10px;
-            border: 1px solid #333;
-            border-radius: 5px;
-            pointer-events: none; /* Allow interaction with underlying 3D scene */
-            display: none;
-        }
-        
-        /* CSS for header */
-        header {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 20px;
-        }
-        
-        h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-        
-        p {
-            font-size: 18px;
-        }
-        
-        /* Add suitable icons using a font icon library or inline SVGs */
-        .icon {
-            font-size: 24px;
-            margin-right: 10px;
-        }
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
 
-        /* Styles for planet links */
-        .planet-link {
-            display: block;
-            margin-top: 10px;
-            text-decoration: none;
-            background-color: #007BFF;
-            color: #ffffff;
-            text-align: center;
-            padding: 10px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
+.container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 
-        .planet-link:hover {
-            background-color: #0056b3;
-        }
+h1 {
+    font-size: 60px;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    transition: font-size 0.3s, color 0.3s;
+}
+
+h1:hover {
+    font-size: 100px; /* Increase the font size on hover */
+    color: #00aaff; /* Change the text color on hover */
+}
+
+#background-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.button {
+    display: inline-block;
+    padding: 15px 30px;
+    background-color: #007BFF;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 5px;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
     </style>
 </head>
+
 <body>
-    
-   
-
-    <!-- Include Three.js library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
-    <script>
-        // Initialize Three.js scene
-        var scene = new THREE.Scene();
-
-        // Create a camera
-        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-        camera.position.set(0, 0, 5);
-
-        // Create a renderer
-        var renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-
-        // Create the Milky Way background
-        var milkyWayTexture = new THREE.TextureLoader().load('milkywaytexture.jpg'); // Replace 'milkyway.jpg' with your Milky Way texture
-        var milkyWayMaterial = new THREE.MeshBasicMaterial({ map: milkyWayTexture, side: THREE.BackSide });
-        var milkyWayGeometry = new THREE.SphereGeometry(30, 32, 32); // Adjust the radius as needed
-        var milkyWay = new THREE.Mesh(milkyWayGeometry, milkyWayMaterial);
-        scene.add(milkyWay);
-
-        // Create the Sun
-        var sunGeometry = new THREE.SphereGeometry(3, 32, 32);
-        var sunTexture = new THREE.TextureLoader().load('suntexture.jpg'); // Provide a suitable Sun texture
-        var sunMaterial = new THREE.MeshBasicMaterial({ map: sunTexture });
-        var sun = new THREE.Mesh(sunGeometry, sunMaterial);
-        sun.userData={  radius: 20, zoom: 1, name: 'Sun', description: 'The Sun, the center of our solar system, is a massive star that plays a fundamental role in maintaining the conditions for water to exist on Earth and influencing water-related processes in space. The Sun\'s energy and radiation play a crucial role in driving the water cycle on our planet, which includes processes like evaporation, condensation, and precipitation. Additionally, the Sun s energy influences space weather and can have significant effects on water-related processes in space, such as on planets, moons, and asteroids.'
-     }
-       
-
-        scene.add(sun);
-        
-
-        // Create an array to hold planets
-        var planets = [];
-
-        // Create Mars
-        var marsGeometry = new THREE.SphereGeometry(1, 32, 32);
-        var marsTexture = new THREE.TextureLoader().load('marstexture.jpg'); // Provide a suitable Mars texture
-        var marsMaterial = new THREE.MeshBasicMaterial({ map: marsTexture });
-        var mars = new THREE.Mesh(marsGeometry, marsMaterial);
-        mars.userData = { radius: 10, zoom: 4, name: 'Mars',
-         description: 'Mars has a north and south pole; both have frozen water ice. During its winter, the north pole gets covered in a layer of carbon dioxide ice about 1 meter thick, which then sublimes and exposes the water ice in summer. The south pole is permanently covered in a CO2 ice layer about 8 km thick, so its water ice is never seen on the surface.' 
-         };
-         var planet = 'mars.html'
-         
-        planets.push(mars);
-
-        // Create Earth
-        var earthGeometry = new THREE.SphereGeometry(1, 32, 32);
-        var earthTexture = new THREE.TextureLoader().load('earthtexture.jpg'); // Provide a suitable Earth texture
-        var earthMaterial = new THREE.MeshBasicMaterial({ map: earthTexture });
-        var earth = new THREE.Mesh(earthGeometry, earthMaterial);
-        earth.userData = { radius: 14, zoom: 3, name: 'Earth', description: 'Earth, also known as the Blue Planet, is the third planet from the Sun. It is the only planet known to support life and has vast amounts of water in the form of oceans and polar ice caps.' };
-        planets.push(earth);
-         // Create the Moon
-         var moonGeometry = new THREE.SphereGeometry(1, 32, 32);
-        var moonTexture = new THREE.TextureLoader().load('moontexture.jpg'); // Provide a suitable Moon texture
-        var moonMaterial = new THREE.MeshBasicMaterial({ map: moonTexture });
-        var moon = new THREE.Mesh(moonGeometry, moonMaterial);
-        moon.userData = {
-            radius: 18, // Adjust the radius as needed
-            zoom: 5,
-            name: 'Moon',
-            description: 'The Moon is Earth\'s only natural satellite. It has a rocky surface with many craters, and it lacks a significant atmosphere. The Moon\'s gravitational pull affects Earth\'s tides.'
-        };
-        planets.push(moon);
-
-        // Position the Moon within the scene
-        moon.position.x = moon.userData.radius * 4; // Adjust the position as needed
-        scene.add(moon);
-
-        // Create Neptune
-        var neptuneGeometry = new THREE.SphereGeometry(1, 32, 32);
-        var neptuneTexture = new THREE.TextureLoader().load('neptunetexture.jpg'); // Provide a suitable Neptune texture
-        var neptuneMaterial = new THREE.MeshBasicMaterial({ map: neptuneTexture });
-        var neptune = new THREE.Mesh(neptuneGeometry, neptuneMaterial);
-        neptune.userData = { radius: 22, zoom: 2, name: 'Neptune', description: 'Neptune is the eighth and farthest-known planet from the Sun in the Solar System. It is a gas giant with a deep blue color, primarily due to the presence of methane in its atmosphere. While it doesn\'t have liquid water on its surface, it likely has water in the form of ice and water vapor in its atmosphere.' };
-        planets.push(neptune);
-        neptune.position.x = neptune.userData.radius;
-
-        // Create Venus
-        var venusGeometry = new THREE.SphereGeometry(1, 32, 32);
-        var venusTexture = new THREE.TextureLoader().load('venustexture.jpg'); // Provide a suitable Venus texture
-        var venusMaterial = new THREE.MeshBasicMaterial({ map: venusTexture });
-        var venus = new THREE.Mesh(venusGeometry, venusMaterial);
-        venus.userData = { radius: 6, zoom: 3, name: 'Venus', description: 'Venus, often referred to as Earth\'s "sister planet," is the second planet from the Sun. Its surface is extremely hot due to a runaway greenhouse effect, making it inhospitable to life. It has no liquid water on its surface, but it may have water ice in its polar regions and water vapor in its atmosphere.' };
-        planets.push(venus);
-
-        // Create Ceres
-        var ceresGeometry = new THREE.SphereGeometry(1, 32, 32);
-        var ceresTexture = new THREE.TextureLoader().load('cerestexture.jpg'); // Provide a suitable Ceres texture
-        var ceresMaterial = new THREE.MeshBasicMaterial({ map: ceresTexture });
-        var ceres = new THREE.Mesh(ceresGeometry, ceresMaterial);
-        ceres.userData = {
-            radius: 25, // Adjust the radius as needed
-            zoom: 5,
-            name: 'Ceres',
-            description: 'Ceres is the largest object in the asteroid belt between Mars and Jupiter. It is considered both an asteroid and a dwarf planet. Ceres has a rocky core with a water-ice mantle and may have a subsurface ocean.'
-        };
-        planets.push(ceres);
-
-        // Position Ceres within the scene
-        ceres.position.x = ceres.userData.radius * 6; // Adjust the position as needed
-        scene.add(ceres);
-
-       
-        
-
-        // Add planets to the scene
-        planets.forEach(function(planet) {
-            scene.add(planet);
-            planet.position.x = planet.userData.radius;
-        });
-
-        // Handle planet hover events
-        var hoveredPlanet = null;
-        var planetInfoContainer = document.createElement('div');
-        planetInfoContainer.className = 'planet-info';
-        document.body.appendChild(planetInfoContainer);
-
-        function handlePlanetHover(event) {
-            var raycaster = new THREE.Raycaster();
-            var mouse = new THREE.Vector2();
-
-            // Calculate normalized mouse coordinates
-            mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
-            mouse.y = - (event.clientY / renderer.domElement.clientHeight) * 2 + 1;
-
-            // Set the ray's origin and direction based on the camera and mouse
-            raycaster.setFromCamera(mouse, camera);
-
-            // Create an array to store intersected objects
-            var intersects = raycaster.intersectObjects(planets);
-
-            if (intersects.length > 0) {
-                // If a planet is hovered, display information
-                var planet = intersects[0].object;
-
-                if (hoveredPlanet !== planet) {
-                    hoveredPlanet = planet;
-
-                    // Update the planet info container content
-                    planetInfoContainer.innerHTML = `<strong>${planet.userData.name}</strong><br>${planet.userData.description}`;
-
-                    // Position the planet info container near the cursor
-                    planetInfoContainer.style.left = event.clientX + 'px';
-                    planetInfoContainer.style.top = event.clientY + 'px';
-
-                    // Show the planet info container
-                    planetInfoContainer.style.display = 'block';
-                }
-            } else {
-                // If no planet is hovered, hide the planet info container
-                hoveredPlanet = null;
-                planetInfoContainer.style.display = 'none';
-            }
-        }
-
-        // Add event listener for mousemove (hover) events
-        window.addEventListener('mousemove', handlePlanetHover, false);
-
-        // Animation loop
-        var animate = function () {
-            requestAnimationFrame(animate);
-
-            // Rotate the Sun
-            sun.rotation.y += 0.002;
-
-            // Update planet positions
-            planets.forEach(function(planet) {
-                planet.position.x -= 0.02; // Move planets from right to left
-
-                // If a planet goes too far to the left, reset its position
-                if (planet.position.x < -planet.userData.radius) {
-                    planet.position.x = planet.userData.radius * 4;
-                }
-            });
-
-            renderer.render(scene, camera);
-        };
-
-        animate();
-
-        // Add a click event listener to Mars
-        mars.addEventListener('click', function () {
-            // Specify the URL for Mars's page
-            window.location.href = 'mars.html';
-        });
-
-        // Add a link to Mars's page
-        var marsLink = document.createElement('a');
-        marsLink.href = 'mars.html'; // Specify the URL for Mars's page
-        marsLink.textContent = 'Learn More'; // Change the link text as desired
-        marsLink.className = 'planet-link'; // Apply a class for styling
-        planetInfoContainer.appendChild(marsLink);
-        // ... (your existing code)
-
-// Function to handle planet hover events
-function handlePlanetHover(event) {
-    var raycaster = new THREE.Raycaster();
-    var mouse = new THREE.Vector2();
-
-    // Calculate normalized mouse coordinates
-    mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
-    mouse.y = - (event.clientY / renderer.domElement.clientHeight) * 2 + 1;
-
-    // Set the ray's origin and direction based on the camera and mouse
-    raycaster.setFromCamera(mouse, camera);
-
-    // Create an array to store intersected objects
-    var intersects = raycaster.intersectObjects(planets);
-
-    if (intersects.length > 0) {
-        // If a planet is hovered, display information
-        var planet = intersects[0].object;
-
-        if (hoveredPlanet !== planet) {
-            if (hoveredPlanet) {
-                // Reset the scale of the previously hovered planet
-                hoveredPlanet.scale.set(1, 1, 1);
-            }
-
-            hoveredPlanet = planet;
-
-            // Update the scale of the hovered planet to create a 3D effect
-            planet.scale.set(1.2, 1.2, 1.2);
-
-            // Update the planet info container content
-            planetInfoContainer.innerHTML = `<strong>${planet.userData.name}</strong><br>${planet.userData.description}`;
-
-            // Position the planet info container near the cursor
-            planetInfoContainer.style.left = event.clientX + 'px';
-            planetInfoContainer.style.top = event.clientY + 'px';
-
-            // Show the planet info container
-            planetInfoContainer.style.display = 'block';
-        }
-    } else {
-        // If no planet is hovered, reset the scale and hide the planet info container
-        if (hoveredPlanet) {
-            hoveredPlanet.scale.set(1, 1, 1);
-        }
-        hoveredPlanet = null;
-        planetInfoContainer.style.display = 'none';
-    }
-}
-// ...
-
-// Create planet links
-planets.forEach(function(planet) {
-    var planetLink = document.createElement('a');
-    planetLink.href = planet.userData.link;
-    planetLink.textContent = 'Learn More';
-    planetLink.className = 'planet-link';
-    planetInfoContainer.appendChild(planetLink);
-});
-
-// ...
-
-// Add event listener for mousemove (hover) events
-window.addEventListener('mousemove', handlePlanetHover, false);
-
-// Create a button element for each planet
-var planetButton = document.createElement('button');
-            planetButton.className = 'planet-button';
-            planetButton.textContent = `Explore ${planet.userData.name}`;
-            document.body.appendChild(planetButton);
-
-            // Handle the click event for the planet button
-            planetButton.addEventListener('click', function() {
-                // Specify the URL for the planet's page or take any action you desire
-                window.location.href = `${planet.userData.name.toLowerCase()}.html`;
-            });
-
-            // Handle planet hover events (same code as previously mentioned)
-            planet.addEventListener('mouseenter', function() {
-                planetButton.style.display = 'block';
-            });
-
-            planet.addEventListener('mouseleave', function() {
-                planetButton.style.display = 'none';
-            });
-        
-
- // Create a button specifically for Earth
- var earthButton = document.createElement('button');
-        earthButton.className = 'planet-link';
-        earthButton.textContent = 'Explore Earth';
-        document.body.appendChild(earthButton);
-
-        // Position the Earth button and handle hover events
-        earthButton.style.display = 'none'; // Initially hide the Earth button
-
-        // Handle Earth hover events
-        earth.addEventListener('mouseenter', function() {
-            earthButton.style.display = 'block';
-        });
-
-        earth.addEventListener('mouseleave', function() {
-            earthButton.style.display = 'none';
-        });
-
-        // Handle the click event for the Earth button
-        earthButton.addEventListener('click', function() {
-            // Specify the URL for Earth's page or take any action you desire
-            window.location.href = 'mars.html'; // Change the URL as needed
-        });
-
-    </script>
+    <div class="container">
+        <h1>AQUANAUTS</h1>
+        <video autoplay muted loop id="background-video">
+            <source src="background_aquanauts.mp4" type="video/mp4">
+            <!-- Provide your background video file path -->
+        </video>
+        <a href="index.html" class="button">Explore Aqua Realms</a>
+        <a href="file:///C:/Users/nihar/Desktop/SAVE%20WATER%20PDEU%20HACKATHON/homepage3.html" class="button">AquaSustain Drive </a>
+    </div>
 </body>
 </html>
